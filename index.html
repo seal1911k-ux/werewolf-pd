@@ -37,7 +37,11 @@
 <body class="p-3">
 
     <div class="container pb-5">
-        <h1 class="text-center mb-4">🐺 WEREWOLF PD</h1>
+        <h1 class="text-center mb-2">🐺 Werewolf PD</h1>
+
+        <div class="text-center mb-4">
+            <button id="btn-mute" class="btn btn-outline-warning btn-sm" onclick="toggleSound()">🔊 เปิดเสียงอยู่</button>
+        </div>
 
         <div class="modal fade" id="roleInfoModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-dark text-white"><div class="modal-header"><h5 class="modal-title" id="modal-role-name"></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p id="modal-role-description"></p><p class="small text-muted">ทีม: <span id="modal-role-team"></span></p></div></div></div>
@@ -46,16 +50,12 @@
         <div class="modal fade" id="drunkPoolModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content bg-dark text-white border-warning">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title fw-bold">🍺 ตั้งค่า: กองการ์ดสำหรับขี้เมา</h5>
-                    </div>
+                    <div class="modal-header bg-warning text-dark"><h5 class="modal-title fw-bold">🍺 ตั้งค่า: กองการ์ดสำหรับขี้เมา</h5></div>
                     <div class="modal-body">
                         <div class="alert alert-secondary text-dark small">เลือกการ์ดที่จะใส่กองกลาง (เช้าวันที่ 3 ขี้เมาจะสุ่มได้ 1 ใบจากกองนี้)</div>
                         <div id="drunk-pool-selection" class="row g-2"></div>
                     </div>
-                    <div class="modal-footer border-secondary">
-                        <button type="button" class="btn btn-warning fw-bold w-100" onclick="saveDrunkPool()">💾 บันทึก & เริ่มเกม</button>
-                    </div>
+                    <div class="modal-footer border-secondary"><button type="button" class="btn btn-warning fw-bold w-100" onclick="saveDrunkPool()">💾 บันทึก & เริ่มเกม</button></div>
                 </div>
             </div>
         </div>
@@ -73,11 +73,14 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-dark table-hover align-middle">
-                                <thead><tr><th>ชื่อ</th><th>บทบาท</th><th>ลบ</th></tr></thead>
+                                <thead><tr><th>ชื่อ (แก้ไขได้)</th><th>บทบาท</th><th>ลบ</th></tr></thead>
                                 <tbody id="setup-table-body"></tbody>
                             </table>
                         </div>
                         <button class="btn btn-warning w-100 mt-2 fw-bold py-2" onclick="checkDrunkAndStart()">✅ เริ่มเกม</button>
+
+                        <button class="btn btn-outline-secondary w-100 mt-2 btn-sm" onclick="loadLastGame()">🔄 โหลดโรลจากตาที่แล้ว (ไม่เอาชื่อ)</button>
+
                     </div>
                 </div>
             </div>
@@ -102,23 +105,23 @@
                 <div class="card border-warning mb-3" id="night-control-section" style="display:none;">
                     <div class="card-header text-warning">🌙 คืนที่ <span id="night-count">1</span></div>
                     <div class="card-body">
-                        <div id="box-cupid" class="role-action-box" style="border-color:#e84393;"><span class="role-title text-danger">💘 กามเทพ</span><div class="input-group"><select id="cupid-1" class="form-select bg-dark text-white"><option value="">1</option></select><select id="cupid-2" class="form-select bg-dark text-white"><option value="">2</option></select></div></div>
-                        <div id="box-spellcaster" class="role-action-box"><span class="role-title">🤐 จอมเวท</span><select id="spell-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-oldhag" class="role-action-box"><span class="role-title">👵 แม่หมอ</span><select id="hag-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-guard" class="role-action-box"><span class="role-title text-info">🛡️ บอดี้การ์ด (กันตัวเองได้ 1 ครั้ง)</span><select id="guard-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-cupid" class="role-action-box" style="border-color:#e84393;"><span class="role-title text-white">💘 กามเทพ</span><div class="input-group"><select id="cupid-1" class="form-select bg-dark text-white"><option value="">1</option></select><select id="cupid-2" class="form-select bg-dark text-white"><option value="">2</option></select></div></div>
+                        <div id="box-spellcaster" class="role-action-box"><span class="role-title text-white">🤐 จอมเวท</span><select id="spell-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-oldhag" class="role-action-box"><span class="role-title text-white">👵 แม่หมอ</span><select id="hag-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-guard" class="role-action-box"><span class="role-title text-white">🛡️ บอดี้การ์ด (กันตัวเองได้ 1 ครั้ง)</span><select id="guard-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
                         <div id="box-priest" class="role-action-box"><span class="role-title text-white">✝️ นักบวช</span><select id="priest-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-wolf" class="role-action-box active" style="border-color:#d63031;"><span class="role-title text-danger">🐺 หมาป่า (ฆ่าแวมไพร์ไม่เข้า)</span><div id="disease-alert">🦠 ติดเชื้อ! งดฆ่า</div><select id="wolf-target" class="form-select bg-dark text-white border-danger"><option value="">- ไม่มีคนตาย -</option></select><div id="wolf-rage-box"><label class="text-white small">🔥 ความแค้น (ฆ่าเพิ่ม):</label><select id="wolf-target-2" class="form-select bg-dark text-white"><option value="">-</option></select></div></div>
-                        <div id="box-vampire" class="role-action-box" style="border-color:#ff7675;"><span class="role-title text-danger">🧛‍♂️ แวมไพร์ (กัด=ตายตอนโหวต)</span><select id="vampire-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-witch" class="role-action-box" style="border-color:#f1c40f;"><span class="role-title text-warning">🧪 แม่มด</span><div class="d-flex gap-2"><select id="witch-save" class="form-select bg-dark text-white"><option value="">ยาช่วย: -</option></select><select id="witch-kill" class="form-select bg-dark text-white"><option value="">ยาพิษ: -</option></select></div></div>
-                        <div id="box-huntress" class="role-action-box"><span class="role-title">🏹 พรานหญิง</span><select id="huntress-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-revealer" class="role-action-box"><span class="role-title text-warning">🔦 ผู้เผยตัวตน</span><select id="revealer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-cult" class="role-action-box"><span class="role-title">🛐 เจ้าลัทธิ</span><select id="cult-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-seer" class="role-action-box"><span class="role-title text-success">🔮 เทพพยากรณ์</span><select id="seer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-mystic" class="role-action-box"><span class="role-title text-info">👁️‍🗨️ เทพผู้รู้แจ้ง</span><select id="mystic-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-auraseer" class="role-action-box"><span class="role-title text-success">✨ ญาณทิพย์</span><select id="aura-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-sorcerer" class="role-action-box"><span class="role-title text-danger">👁️ นางปีศาจ</span><select id="sorcerer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-pi" class="role-action-box"><span class="role-title text-primary">🕵️‍♂️ นักสืบ</span><select id="pi-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
-                        <div id="box-mentalist" class="role-action-box"><span class="role-title">🧠 นักสะกดจิต</span><div class="input-group"><select id="mental-1" class="form-select bg-dark text-white"><option value="">1</option></select><select id="mental-2" class="form-select bg-dark text-white"><option value="">2</option></select></div></div>
+                        <div id="box-wolf" class="role-action-box active" style="border-color:#d63031;"><span class="role-title text-white">🐺 หมาป่า (ฆ่าแวมไพร์ไม่เข้า)</span><div id="disease-alert">🦠 ติดเชื้อ! งดฆ่า</div><select id="wolf-target" class="form-select bg-dark text-white border-danger"><option value="">- ไม่มีคนตาย -</option></select><div id="wolf-rage-box"><label class="text-white small">🔥 ความแค้น (ฆ่าเพิ่ม):</label><select id="wolf-target-2" class="form-select bg-dark text-white"><option value="">-</option></select></div></div>
+                        <div id="box-vampire" class="role-action-box" style="border-color:#ff7675;"><span class="role-title text-white">🧛‍♂️ แวมไพร์ (กัด=ตายตอนโหวต)</span><select id="vampire-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-witch" class="role-action-box" style="border-color:#f1c40f;"><span class="role-title text-white">🧪 แม่มด</span><div class="d-flex gap-2"><select id="witch-save" class="form-select bg-dark text-white"><option value="">ยาช่วย: -</option></select><select id="witch-kill" class="form-select bg-dark text-white"><option value="">ยาพิษ: -</option></select></div></div>
+                        <div id="box-huntress" class="role-action-box"><span class="role-title text-white">🏹 พรานหญิง</span><select id="huntress-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-revealer" class="role-action-box"><span class="role-title text-white">🔦 ผู้เผยตัวตน</span><select id="revealer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-cult" class="role-action-box"><span class="role-title text-white">🛐 เจ้าลัทธิ</span><select id="cult-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-seer" class="role-action-box"><span class="role-title text-white">🔮 เทพพยากรณ์</span><select id="seer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-mystic" class="role-action-box"><span class="role-title text-white">👁️‍🗨️ เทพผู้รู้แจ้ง</span><select id="mystic-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-auraseer" class="role-action-box"><span class="role-title text-white">✨ ญาณทิพย์ (เช็คโรลพิเศษ)</span><select id="aura-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-sorcerer" class="role-action-box"><span class="role-title text-white">👁️ นางปีศาจ</span><select id="sorcerer-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-pi" class="role-action-box"><span class="role-title text-white">🕵️‍♂️ นักสืบ</span><select id="pi-target" class="form-select bg-dark text-white"><option value="">-</option></select></div>
+                        <div id="box-mentalist" class="role-action-box"><span class="role-title text-white">🧠 นักสะกดจิต</span><div class="input-group"><select id="mental-1" class="form-select bg-dark text-white"><option value="">1</option></select><select id="mental-2" class="form-select bg-dark text-white"><option value="">2</option></select></div></div>
                         <button id="btn-night" class="btn btn-danger w-100 mt-3 shadow" onclick="processNight()">⚡ จบคืนนี้</button>
                     </div>
                 </div>
@@ -126,15 +129,29 @@
                 <div class="card border-info" id="vote-control-section" style="display:none;">
                     <div class="card-header text-info">🗳️ ลงคะแนนโหวต (โบสถ์)</div>
                     <div class="card-body">
-                        <label class="mb-2 text-white small">เลือกผู้ที่ได้รับคะแนนโหวตสูงสุด (Mod ตัดสินใจ):</label>
-                        <div class="input-group"><select id="vote-target" class="form-select bg-dark text-white border-secondary"><option value="">เลือกคนโดนโหวต...</option></select><button id="btn-vote" class="btn btn-outline-info" onclick="executeVote()">🔥 ประหาร!</button></div>
-                        <button class="btn btn-secondary w-100 mt-2" onclick="endDayGoNight()">🌙 จบวัน</button>
+                        <div id="vote-select-phase">
+                            <label class="mb-2 text-white small">ใครได้รับคะแนนโหวตสูงสุด?</label>
+                            <div class="input-group mb-2">
+                                <select id="vote-target" class="form-select bg-dark text-white border-secondary"><option value="">- ไม่มีใครถูกโหวต -</option></select>
+                                <button class="btn btn-warning fw-bold" onclick="startDefense()">⚖️ เชิญขึ้นศาล</button>
+                            </div>
+                            <button class="btn btn-secondary w-100 btn-sm" onclick="endDayGoNight()">🌙 จบวัน (ไม่มีคนตาย)</button>
+                        </div>
+                        <div id="vote-defense-phase" style="display:none;" class="text-center">
+                            <h4 class="text-danger">⚖️ ศาลพิจารณาคดี</h4>
+                            <h2 class="text-warning my-3" id="defendant-name">จำเลย: ???</h2>
+                            <div class="alert alert-secondary p-2 mb-3">⏳ เวลาแก้ตัว: <span id="defense-timer" class="fw-bold fs-4">30</span> วินาที</div>
+                            <div class="row g-2">
+                                <div class="col-6"><button class="btn btn-outline-success w-100 py-3" onclick="finalizeVerdict(false)">🕊️ รอด (Innocent)</button></div>
+                                <div class="col-6"><button class="btn btn-danger w-100 py-3" onclick="finalizeVerdict(true)">👎 ประหาร (Guilty)</button></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-6">
-                <div class="card mb-3"><div class="card-header">📋 สถานะผู้เล่น</div><div class="card-body p-0"><table class="table table-dark table-striped mb-0 table-sm"><thead><tr><th>ชื่อ</th><th>บท</th><th>สถานะ</th></tr></thead><tbody id="status-table-body"></tbody></table></div></div>
+                <div class="card mb-3"><div class="card-header">📋 สถานะผู้เล่น</div><div class="card-body p-0"><table class="table table-dark table-striped mb-0 table-sm"><thead><tr><th>ชื่อ (แก้ไขได้)</th><th>บทบาท</th><th>ลบ</th></tr></thead><tbody id="status-table-body"></tbody></table></div></div>
                 <div class="card"><div class="card-header">📜 Log</div><div class="card-body p-0"><div id="game-log" class="log-box"></div></div></div>
                 <div class="text-center mt-3"><button onclick="if(confirm('รีเซ็ต?')) location.reload()" class="btn btn-outline-secondary btn-sm">🔄 รีเซ็ต</button></div>
             </div>
@@ -145,44 +162,44 @@
 
     <script>
         const roleDB = [
-            { group: "ชาวบ้าน", roles: [{name:"ชาวบ้าน",team:"villager"},{name:"เทพพยากรณ์",team:"villager"},{name:"จอมเวท",team:"villager"},{name:"กามเทพ",team:"villager"},{name:"บอดี้การ์ด",team:"villager"},{name:"ญาณทิพย์",team:"villager"},{name:"ขี้เมา",team:"villager"},{name:"เจ้าชาย",team:"villager"},{name:"นักบวช",team:"villager"},{name:"นักสืบ",team:"villager"},{name:"ตัวป่วน",team:"villager"},{name:"แม่มด",team:"villager"},{name:"แม่หมอ",team:"villager"},{name:"ศิษย์เทพฯ",team:"villager"},{name:"นายกฯ",team:"villager"},{name:"นายพราน",team:"villager"},{name:"ผู้ป่วยติดเชื้อ",team:"villager"},{name:"ผู้รักสันติ",team:"villager"},{name:"พรายกระซิบ",team:"villager"},{name:"เมสัน",team:"villager"},{name:"ภูตจำแลง",team:"villager"},{name:"ลูกครึ่ง",team:"villager"},{name:"หนุ่มถึก",team:"villager"},{name:"ไอ้ทึ่ม",team:"villager"},{name:"มือระเบิด",team:"villager"},{name:"ผู้รู้แจ้ง",team:"villager"},{name:"พรานหญิง",team:"villager"},{name:"นักสะกดจิต",team:"villager"},{name:"ผู้เผยตัวตน",team:"villager"}] },
-            { group: "หมาป่า", roles: [{name:"มนุษย์หมาป่า",team:"wolf"},{name:"หมาป่าเดียวดาย",team:"wolf"},{name:"ลูกหมาป่า",team:"wolf"},{name:"สมุนรับใช้",team:"wolf"},{name:"นางปีศาจ",team:"wolf"},{name:"อันธพาล",team:"wolf"},{name:"ผู้ต้องคำสาป",team:"villager"},{name:"จ่าฝูง",team:"wolf"}] },
-            { group: "อื่นๆ", roles: [{name:"ยาจก",team:"solo"},{name:"แวมไพร์",team:"vampire"},{name:"เจ้าลัทธิ",team:"cult"}, {name:"ฆาตกรต่อเนื่อง", team:"solo"}] }
+            { group: "ชาวบ้าน", roles: [{name:"ชาวบ้าน (Villager)",team:"villager"},{name:"เทพพยากรณ์ (Seer)",team:"villager"},{name:"จอมเวท (Spellcaster)",team:"villager"},{name:"กามเทพ (Cupid)",team:"villager"},{name:"บอดี้การ์ด (Bodyguard)",team:"villager"},{name:"ญาณทิพย์ (Aura Seer)",team:"villager"},{name:"ขี้เมา (Drunk)",team:"villager"},{name:"เจ้าชาย (Prince)",team:"villager"},{name:"นักบวช (Priest)",team:"villager"},{name:"นักสืบ (P.I.)",team:"villager"},{name:"ตัวป่วน (Troublemaker)",team:"villager"},{name:"แม่มด (Witch)",team:"villager"},{name:"แม่หมอ (Old Hag)",team:"villager"},{name:"ศิษย์เทพพยากรณ์ (Apprentice Seer)",team:"villager"},{name:"นายกเทศมนตรี (Mayor)",team:"villager"},{name:"นายพราน (Hunter)",team:"villager"},{name:"ผู้ป่วยติดเชื้อ (Disease)",team:"villager"},{name:"ผู้รักสันติ (Pacifist)",team:"villager"},{name:"พรายกระซิบ (Ghost)",team:"villager"},{name:"ภราดรแห่งเมสัน (Mason)",team:"villager"},{name:"ภูตจำแลง (Doppelganger)",team:"villager"},{name:"ลูกครึ่งมนุษย์หมาป่า (Lycan)",team:"villager"},{name:"หนุ่มถึก (Tough Guy)",team:"villager"},{name:"ไอ้ทึ่ม (Villager Idiot)",team:"villager"},{name:"มือระเบิดพลีชีพ (Mad Bomber)",team:"villager"},{name:"เทพผู้รู้แจ้ง (Mystic Seer)",team:"villager"},{name:"พรานหญิง (Huntress)",team:"villager"},{name:"นักสะกดจิต (Mentalist)",team:"villager"},{name:"ผู้เผยตัวตน (Revealer)",team:"villager"}] },
+            { group: "หมาป่า", roles: [{name:"มนุษย์หมาป่า (Werewolf)",team:"wolf"},{name:"มนุษย์หมาป่าเดียวดาย (Lone Wolf)",team:"wolf"},{name:"ลูกมนุษย์หมาป่า (Wolf Cub)",team:"wolf"},{name:"สมุนรับใช้ (Minion)",team:"wolf"},{name:"นางปีศาจ (Sorcerer)",team:"wolf"},{name:"อันธพาล (Hoodlum)",team:"wolf"},{name:"ผู้ต้องคำสาป (Cursed)",team:"villager"},{name:"มนุษย์หมาป่าจ่าฝูง (Alpha Wolf)",team:"wolf"}] },
+            { group: "อื่นๆ", roles: [{name:"ยาจก (Tanner)",team:"solo"},{name:"แวมไพร์ (Vampire)",team:"vampire"},{name:"เจ้าลัทธิ (Cult Leader)",team:"cult"}, {name:"ฆาตกรต่อเนื่อง (Serial Killer)", team:"solo"}] }
         ];
 
         const roleDescriptions = {
-            "ชาวบ้าน": { desc: "ไม่มีความสามารถพิเศษ", team: "Villager" },
-            "เทพพยากรณ์": { desc: "รู้ว่าผู้เล่นที่เลือกเป็นคนดีหรือคนเลว (Good/Bad)", team: "Villager" },
-            "จอมเวท": { desc: "กลางคืนเลือกผู้เล่นเพื่อ 'ใบ้' ทำให้ผู้เล่นคนนั้นใช้ความสามารถไม่ได้ในคืนนั้น", team: "Villager" },
-            "กามเทพ": { desc: "ในคืนแรกเท่านั้น เลือก 2 คนเป็นคู่รัก หากคนใดคนหนึ่งตาย อีกคนจะตายตามทันที", team: "Villager" },
-            "บอดี้การ์ด": { desc: "เลือกผู้เล่นเพื่อป้องกันการถูกฆ่าในคืนนั้น (สามารถกันตัวเองได้ 1 ครั้ง)", team: "Villager" },
-            "ญาณทิพย์": { desc: "รู้ว่าผู้เล่นที่เลือกเป็นคนดีหรือคนเลว แต่แม่นยำน้อยกว่าเทพพยากรณ์", team: "Villager" },
-            "ขี้เมา": { desc: "เช้าวันที่ 3 จะสุ่มอาชีพใหม่จากกองที่ Mod เลือกไว้", team: "Villager (รอเปลี่ยน)" },
-            "เจ้าชาย": { desc: "เมื่อถูกโหวตประหาร จะเปิดเผยตัวและรอดจากการประหารทันที (ใช้ได้ 1 ครั้ง)", team: "Villager" },
-            "นักบวช": { desc: "กลางคืนเลือกผู้เล่นเพื่อปกป้องจากการโจมตีกลางคืนทุกชนิด (ยกเว้นยาพิษ)", team: "Villager" },
-            "นักสืบ": { desc: "กลางคืนเลือกผู้เล่นสองคนเพื่อส่องดูว่าพวกเขามีบทบาทเดียวกันหรือไม่", team: "Villager" },
-            "ตัวป่วน": { desc: "ไม่มีความสามารถพิเศษ แต่ทำให้สับสน", team: "Villager" },
-            "แม่มด": { desc: "มี 2 ยา: ยาช่วย (Save) และยาพิษ (Kill) ใช้ได้อย่างละ 1 ครั้งต่อเกม", team: "Villager" },
-            "แม่หมอ": { desc: "กลางคืนเลือกผู้เล่นเพื่อ 'ไล่ออก' ทำให้ผู้เล่นคนนั้นใช้ความสามารถไม่ได้ในคืนนั้น", team: "Villager" },
-            "ศิษย์เทพฯ": { desc: "ไม่มีความสามารถพิเศษ แต่รู้ว่าใครคือเทพพยากรณ์", team: "Villager" },
-            "นายกฯ": { desc: "มีสิทธิ์ชี้ขาดในการโหวตที่คะแนนเท่ากัน (Mod ตัดสินใจหน้างาน)", team: "Villager" },
-            "นายพราน": { desc: "เมื่อตายจากเหตุใดก็ตาม สามารถลากคนอื่นให้ตายตามได้ 1 คน", team: "Villager" },
-            "ผู้ป่วยติดเชื้อ": { desc: "ถ้าถูกหมาป่าฆ่า หมาป่าจะงดฆ่าในคืนถัดไป", team: "Villager" },
-            "หนุ่มถึก": { desc: "เมื่อถูกโจมตีกลางคืน จะไม่ตายทันที แต่จะตายในเช้าวันรุ่งขึ้น", team: "Villager" },
-            "ไอ้ทึ่ม": { desc: "เมื่อถูกโหวตประหาร จะเปิดเผยตัวและรอดจากการประหารทันที (ถือว่าแพ้ทันที)", team: "Villager (Idiot)" },
-            "มือระเบิด": { desc: "เมื่อถูกฆ่าตาย จะระเบิดผู้เล่นที่นั่งซ้ายและขวาของตนเองตายตามไปด้วย", team: "Villager" },
-            "พรานหญิง": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า", team: "Villager" },
-            "ผู้รู้แจ้ง": { desc: "กลางคืนเลือกผู้เล่นเพื่อดูบทบาทที่แท้จริง", team: "Villager" },
-            "ผู้เผยตัวตน": { desc: "กลางคืนเลือกผู้เล่น หากคนนั้นเป็นหมาป่า ผู้เล่นคนนั้นตาย หากไม่เป็นหมาป่า ตนเองจะตาย", team: "Villager" },
-            "นักสะกดจิต": { desc: "กลางคืนเลือกผู้เล่นสองคนเพื่อเช็คว่าเป็นฝ่ายเดียวกันหรือไม่", team: "Villager" },
-            "มนุษย์หมาป่า": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า หากเป้าหมายเป็นแวมไพร์จะฆ่าไม่เข้า", team: "Wolf" },
-            "ลูกหมาป่า": { desc: "เมื่อตายแล้ว คืนถัดไปหมาป่าจะมีสิทธิ์ฆ่า 2 คน", team: "Wolf" },
-            "นางปีศาจ": { desc: "กลางคืนเลือกผู้เล่นเพื่อส่อง หากเป็น 'คนดี' การส่องจะสำเร็จ หากเป็น 'คนเลว' จะไม่รู้ผล", team: "Wolf" },
-            "ผู้ต้องคำสาป": { desc: "ถ้าถูกหมาป่าฆ่ากลางคืน จะเปลี่ยนไปเป็นหมาป่าแทน", team: "Villager (Curse)" },
-            "แวมไพร์": { desc: "กลางคืนกัดผู้เล่น ผู้เล่นคนนั้นจะตายตอนเริ่มโหวต (Vote Phase)", team: "Vampire" },
-            "ยาจก": { desc: "ชนะทันทีเมื่อถูกโหวตประหาร", team: "Solo (Tanner)" },
-            "ฆาตกรต่อเนื่อง": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า (ชนะคนเดียว)", team: "Solo (SK)" },
-            "เจ้าลัทธิ": { desc: "กลางคืนเลือกผู้เล่นเพื่อเปลี่ยนให้มาอยู่ฝ่ายลัทธิ (ชนะคนเดียว)", team: "Cult" }
+            "ชาวบ้าน (Villager)": { desc: "ไม่มีความสามารถพิเศษ", team: "Villager" },
+            "เทพพยากรณ์ (Seer)": { desc: "รู้ว่าผู้เล่นที่เลือกเป็นคนดีหรือคนเลว (Good/Bad)", team: "Villager" },
+            "จอมเวท (Spellcaster)": { desc: "กลางคืนเลือกผู้เล่นเพื่อ 'ใบ้' ทำให้ผู้เล่นคนนั้นใช้ความสามารถไม่ได้ในคืนนั้น", team: "Villager" },
+            "กามเทพ (Cupid)": { desc: "ในคืนแรกเท่านั้น เลือก 2 คนเป็นคู่รัก หากคนใดคนหนึ่งตาย อีกคนจะตายตามทันที", team: "Villager" },
+            "บอดี้การ์ด (Bodyguard)": { desc: "เลือกผู้เล่นเพื่อป้องกันการถูกฆ่าในคืนนั้น (สามารถกันตัวเองได้ 1 ครั้ง)", team: "Villager" },
+            "ญาณทิพย์ (Aura Seer)": { desc: "รู้ว่าผู้เล่นที่เลือกเป็นคนดีหรือคนเลว แต่แม่นยำน้อยกว่าเทพพยากรณ์", team: "Villager" },
+            "ขี้เมา (Drunk)": { desc: "เช้าวันที่ 3 จะสุ่มอาชีพใหม่จากกองที่ Mod เลือกไว้", team: "Villager (รอเปลี่ยน)" },
+            "เจ้าชาย (Prince)": { desc: "เมื่อถูกโหวตประหาร จะเปิดเผยตัวและรอดจากการประหารทันที (ใช้ได้ 1 ครั้ง)", team: "Villager" },
+            "นักบวช (Priest)": { desc: "กลางคืนเลือกผู้เล่นเพื่อปกป้องจากการโจมตีกลางคืนทุกชนิด (ยกเว้นยาพิษ)", team: "Villager" },
+            "นักสืบ (P.I.)": { desc: "กลางคืนเลือกผู้เล่นสองคนเพื่อส่องดูว่าพวกเขามีบทบาทเดียวกันหรือไม่", team: "Villager" },
+            "ตัวป่วน (Troublemaker)": { desc: "ไม่มีความสามารถพิเศษ แต่ทำให้สับสน", team: "Villager" },
+            "แม่มด (Witch)": { desc: "มี 2 ยา: ยาช่วย (Save) และยาพิษ (Kill) ใช้ได้อย่างละ 1 ครั้งต่อเกม", team: "Villager" },
+            "แม่หมอ (Old Hag)": { desc: "กลางคืนเลือกผู้เล่นเพื่อ 'ไล่ออก' ทำให้ผู้เล่นคนนั้นใช้ความสามารถไม่ได้ในคืนนั้น", team: "Villager" },
+            "ศิษย์เทพพยากรณ์ (Apprentice Seer)": { desc: "ไม่มีความสามารถพิเศษ แต่รู้ว่าใครคือเทพพยากรณ์", team: "Villager" },
+            "นายกเทศมนตรี (Mayor)": { desc: "มีสิทธิ์ชี้ขาดในการโหวตที่คะแนนเท่ากัน (Mod ตัดสินใจหน้างาน)", team: "Villager" },
+            "นายพราน (Hunter)": { desc: "เมื่อตายจากเหตุใดก็ตาม สามารถลากคนอื่นให้ตายตามได้ 1 คน", team: "Villager" },
+            "ผู้ป่วยติดเชื้อ (Disease)": { desc: "ถ้าถูกหมาป่าฆ่า หมาป่าจะงดฆ่าในคืนถัดไป", team: "Villager" },
+            "หนุ่มถึก (Tough Guy)": { desc: "เมื่อถูกโจมตีกลางคืน จะไม่ตายทันที แต่จะตายในเช้าวันรุ่งขึ้น", team: "Villager" },
+            "ไอ้ทึ่ม (Villager Idiot)": { desc: "เมื่อถูกโหวตประหาร จะเปิดเผยตัวและรอดจากการประหารทันที (ถือว่าแพ้ทันที)", team: "Villager (Idiot)" },
+            "มือระเบิดพลีชีพ (Mad Bomber)": { desc: "เมื่อถูกฆ่าตาย จะระเบิดผู้เล่นที่นั่งซ้ายและขวาของตนเองตายตามไปด้วย", team: "Villager" },
+            "พรานหญิง (Huntress)": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า", team: "Villager" },
+            "เทพผู้รู้แจ้ง (Mystic Seer)": { desc: "กลางคืนเลือกผู้เล่นเพื่อดูบทบาทที่แท้จริง", team: "Villager" },
+            "ผู้เผยตัวตน (Revealer)": { desc: "กลางคืนเลือกผู้เล่น หากคนนั้นเป็นหมาป่า ผู้เล่นคนนั้นตาย หากไม่เป็นหมาป่า ตนเองจะตาย", team: "Villager" },
+            "นักสะกดจิต (Mentalist)": { desc: "กลางคืนเลือกผู้เล่นสองคนเพื่อเช็คว่าเป็นฝ่ายเดียวกันหรือไม่", team: "Villager" },
+            "มนุษย์หมาป่า (Werewolf)": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า หากเป้าหมายเป็นแวมไพร์จะฆ่าไม่เข้า", team: "Wolf" },
+            "ลูกมนุษย์หมาป่า (Wolf Cub)": { desc: "เมื่อตายแล้ว คืนถัดไปหมาป่าจะมีสิทธิ์ฆ่า 2 คน", team: "Wolf" },
+            "นางปีศาจ (Sorcerer)": { desc: "กลางคืนเลือกผู้เล่นเพื่อส่อง หากเป็น 'คนดี' การส่องจะสำเร็จ หากเป็น 'คนเลว' จะไม่รู้ผล", team: "Wolf" },
+            "ผู้ต้องคำสาป (Cursed)": { desc: "ถ้าถูกหมาป่าฆ่ากลางคืน จะเปลี่ยนไปเป็นหมาป่าแทน", team: "Villager (Curse)" },
+            "แวมไพร์ (Vampire)": { desc: "กลางคืนกัดผู้เล่น ผู้เล่นคนนั้นจะตายตอนเริ่มโหวต (Vote Phase)", team: "Vampire" },
+            "ยาจก (Tanner)": { desc: "ชนะทันทีเมื่อถูกโหวตประหาร", team: "Solo (Tanner)" },
+            "ฆาตกรต่อเนื่อง (Serial Killer)": { desc: "กลางคืนเลือกผู้เล่นเพื่อฆ่า (ชนะคนเดียว)", team: "Solo (SK)" },
+            "เจ้าลัทธิ (Cult Leader)": { desc: "กลางคืนเลือกผู้เล่นเพื่อเปลี่ยนให้มาอยู่ฝ่ายลัทธิ (ชนะคนเดียว)", team: "Cult" }
         };
 
         let players = [];
@@ -195,6 +212,9 @@
         let timerInterval = null, timeLeft = 0;
         let savedTime = { m: 3, s: 0 };
         let drunkRolePool = [];
+        let currentDefendant = null;
+        let audioCtx = null;
+        let isMuted = false;
 
         window.onload = function() {
             const select = document.getElementById('pRole');
@@ -218,14 +238,49 @@
             players.push({id:Date.now(), name:n.value.trim(), role:r.value, team:r.options[r.selectedIndex].dataset.team, isAlive:true, loverId:null});
             n.value=''; n.focus(); renderSetupTable();
         }
-        function renderSetupTable(){ document.getElementById('setup-table-body').innerHTML = players.map((p,i)=>`<tr><td>${p.name}</td><td>${p.role}</td><td><button class="btn btn-sm btn-outline-danger" onclick="players.splice(${i},1);renderSetupTable()">X</button></td></tr>`).join(''); }
+
+        function renderSetupTable(){
+            document.getElementById('setup-table-body').innerHTML = players.map((p,i)=>`
+                <tr>
+                    <td><input type="text" class="form-control form-control-sm bg-dark text-white border-secondary" value="${p.name}" onchange="updatePlayerName(${i}, this.value)"></td>
+                    <td>${p.role}</td>
+                    <td><button class="btn btn-sm btn-outline-danger" onclick="removePlayer(${i})">X</button></td>
+                </tr>`).join('');
+        }
+
+        function updatePlayerName(index, newName) { players[index].name = newName; updateDropdowns(); }
+        function removePlayer(index) { players.splice(index, 1); renderSetupTable(); }
 
         function checkDrunkAndStart() {
             if(players.length<3) { alert("คนน้อยไป!"); return; }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // SAVE ROLE SETUP TO STORAGE
+            localStorage.setItem('werewolf_last_roles', JSON.stringify(players));
+
             if (players.some(p => p.role.includes("ขี้เมา") || p.role.includes("Drunk"))) {
                 generateDrunkOptions(); new bootstrap.Modal(document.getElementById('drunkPoolModal')).show();
             } else { startGame(); }
         }
+
+        // --- NEW: LOAD LAST GAME ---
+        function loadLastGame() {
+            const savedData = localStorage.getItem('werewolf_last_roles');
+            if (!savedData) { alert("ไม่พบข้อมูลตาที่แล้ว!"); return; }
+
+            const savedPlayers = JSON.parse(savedData);
+            players = savedPlayers.map(p => ({
+                id: Date.now() + Math.random(),
+                name: "", // Clear Name
+                role: p.role,
+                team: p.team,
+                isAlive: true,
+                loverId: null
+            }));
+            renderSetupTable();
+        }
+        // --- END NEW ---
 
         function generateDrunkOptions() {
             const container = document.getElementById('drunk-pool-selection'); container.innerHTML = '';
@@ -249,6 +304,36 @@
         function startGame() {
             document.getElementById('setup-section').classList.add('d-none'); document.getElementById('game-section').classList.remove('d-none');
             startDayPhase(); log("=== เริ่มเกม (เช้าวันที่ 1) ===");
+        }
+
+        function toggleSound() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('btn-mute');
+            if (isMuted) { btn.innerHTML = '🔇 ปิดเสียงอยู่'; btn.className = 'btn btn-secondary btn-sm'; }
+            else { btn.innerHTML = '🔊 เปิดเสียงอยู่'; btn.className = 'btn btn-outline-warning btn-sm'; }
+        }
+
+        function playAlarm() {
+            if (isMuted) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const duration = 5000;
+            let nextNote = audioCtx.currentTime;
+            for(let i=0; i<10; i++) {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.value = 880;
+                osc.start(nextNote);
+                osc.stop(nextNote + 0.2);
+                gain.gain.setValueAtTime(0.1, nextNote);
+                gain.gain.linearRampToValueAtTime(1, nextNote + 0.05);
+                gain.gain.linearRampToValueAtTime(0.1, nextNote + 0.2);
+                nextNote += 0.5;
+            }
         }
 
         function startDayPhase() {
@@ -296,9 +381,37 @@
         function saveAndStartTimer() { const m=parseInt(document.getElementById('day-min').value)||0; const s=parseInt(document.getElementById('day-sec').value)||0; savedTime={m,s}; runTimer(m,s); document.getElementById('timer-setup').style.display='none'; }
         function quickStartTimer() { runTimer(savedTime.m, savedTime.s); document.getElementById('timer-quick-start').style.display='none'; }
         function showTimerEdit() { document.getElementById('timer-quick-start').style.display='none'; document.getElementById('timer-setup').style.display='block'; document.getElementById('day-min').value=savedTime.m; document.getElementById('day-sec').value=savedTime.s; }
-        function runTimer(m,s) { timeLeft=(m*60)+s; document.getElementById('timer-controls').style.display='block'; updateTimerDisplay(); clearInterval(timerInterval); timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);skipToVote();}},1000); }
+
+        function runTimer(m,s) {
+            timeLeft=(m*60)+s;
+            document.getElementById('timer-controls').style.display='block';
+            updateTimerDisplay();
+            clearInterval(timerInterval);
+            timerInterval=setInterval(()=>{
+                timeLeft--;
+                updateTimerDisplay();
+                if(timeLeft<=0){
+                    clearInterval(timerInterval);
+                    playAlarm();
+                    setTimeout(() => skipToVote(), 5000);
+                }
+            },1000);
+        }
         function updateTimerDisplay() { let m=Math.floor(timeLeft/60); let s=timeLeft%60; document.getElementById('timer-display').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
-        function pauseTimer() { if(timerInterval) { clearInterval(timerInterval); timerInterval=null; } else { timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);skipToVote();}},1000); } }
+        function pauseTimer() {
+            if(timerInterval) { clearInterval(timerInterval); timerInterval=null; }
+            else {
+                timerInterval=setInterval(()=>{
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if(timeLeft<=0){
+                        clearInterval(timerInterval);
+                        playAlarm();
+                        setTimeout(() => skipToVote(), 5000);
+                    }
+                },1000);
+            }
+        }
 
         function skipToVote() {
             clearInterval(timerInterval);
@@ -313,14 +426,28 @@
                 pendingVampireVictims = [];
             }
             timeLeft = 60; updateTimerDisplay();
-            timerInterval = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) { clearInterval(timerInterval); alert("หมดเวลาโหวต!"); } }, 1000);
-            updateDropdowns(); document.getElementById('vote-control-section').style.display = 'block';
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    playAlarm();
+                    setTimeout(() => alert("หมดเวลาโหวต!"), 100);
+                }
+            }, 1000);
+            updateDropdowns();
+
+            document.getElementById('vote-select-phase').style.display = 'block';
+            document.getElementById('vote-defense-phase').style.display = 'none';
+            document.getElementById('vote-control-section').style.display = 'block';
         }
 
         function updateNightBoxVisibility() {
             const isAlive = (k) => players.some(p => p.isAlive && (p.role.includes(k) || p.team === k));
             document.querySelectorAll('.role-action-box').forEach(b => b.classList.remove('active'));
-            const check = (k,id) => { if(players.some(p => p.isAlive && p.role.includes(k))) document.getElementById(id).classList.add('active'); };
+
+            const check = (keyword, boxId) => { if(players.some(p => p.isAlive && p.role.includes(keyword))) document.getElementById(boxId).classList.add('active'); };
+
             check('หมาป่า','box-wolf'); check('Wolf','box-wolf'); check('แวมไพร์','box-vampire'); check('เทพพยากรณ์','box-seer'); check('บอดี้การ์ด','box-guard'); check('แม่มด','box-witch'); check('จอมเวท','box-spellcaster'); check('แม่หมอ','box-oldhag'); check('นักบวช','box-priest'); check('เจ้าลัทธิ','box-cult'); check('ญาณทิพย์','box-auraseer'); check('นางปีศาจ','box-sorcerer'); check('นักสืบ','box-pi'); check('ผู้เผยตัวตน','box-revealer'); check('นักสะกดจิต','box-mentalist'); check('ผู้รู้แจ้ง','box-mystic'); check('พรานหญิง','box-huntress');
             if(nightCount===1 && (isAlive('กามเทพ')||isAlive('Cupid'))) document.getElementById('box-cupid').classList.add('active');
         }
@@ -372,6 +499,15 @@
             const poison=val('witch-kill'); if(poison) { log(`🧪 แม่มดฆ่า ${poison}`); deaths.push(get(poison)); }
             const hunt=val('huntress-target'); if(hunt) { log(`🏹 พรานหญิงยิง ${hunt}`); deaths.push(get(hunt)); }
             const rev=val('revealer-target'); if(rev) { let t=get(rev); if(t.team==='wolf'||t.role.includes('Werewolf')) { log(`🔦 ชี้ถูก! ${t.name} ตาย`); deaths.push(t); } else { log(`🔦 ชี้ผิด! ตัวเองตาย`); let me=players.find(p=>p.role.includes("เผย")); if(me&&me.isAlive) deaths.push(me); } }
+
+            const aura = val('aura-target');
+            if (aura) {
+                let p = get(aura);
+                let isNormal = (p.role.includes("ชาวบ้าน (Villager)") || p.role.includes("มนุษย์หมาป่า (Werewolf)"));
+                if (isNormal) { log(`✨ ญาณทิพย์ส่อง ${p.name} -> ⚪ ไม่เกิดอะไรขึ้น`); }
+                else { let isBad = (p.team !== 'villager'); log(`✨ ญาณทิพย์ส่อง ${p.name} -> ${isBad ? '🔴 BAD (คนเลว)' : '🟢 GOOD (คนดี)'}`); }
+            }
+
             const seer=val('seer-target'); if(seer){ let p=get(seer); let isEvil=(p.team==='wolf'||p.team==='vampire'||p.role.includes('Lycan')||p.role.includes('ฆาตกร')); log(`🔮 เทพฯส่อง ${p.name} -> ${isEvil?'🔴 เลว':'🟢 ดี'}`); }
             const mystic=val('mystic-target'); if(mystic){ let p=get(mystic); log(`👁️‍🗨️ รู้แจ้งส่อง ${p.name} -> "${p.role}"`); }
 
@@ -380,16 +516,42 @@
             nightCount++; dayCount++; startDayPhase();
         }
 
-        function executeVote() {
-            const t=val('vote-target'); if(!t)return;
-            if(confirm(`ยืนยันประหาร ${t}?`)){
-                log(`☀️ ประหาร ${t}`); let p=get(t);
-                if(p.role.includes("ยาจก")){ win(`${p.name} (ยาจก) ชนะ!`,"bg-warning","ตายสมใจ"); handleDeaths([p],"โหวต",false); return; }
-                if(p.role.includes("เจ้าชาย")){ alert("เจ้าชายเปิดเผยตัว! รอด"); log(`👑 ${p.name} รอด`); return; }
-                if(p.role.includes("ไอ้ทึ่ม")){ alert("ไอ้ทึ่มเปิดเผยตัว! รอด"); log(`🤪 ${p.name} รอด`); return; }
-                pendingVampireVictims = pendingVampireVictims.filter(id => id !== p.id);
-                handleDeaths([p], "โหวต", false);
+        let defenseTimer = null;
+
+        function startDefense() {
+            const targetName = val('vote-target');
+            if (!targetName) { alert("กรุณาเลือกจำเลยก่อน!"); return; }
+
+            currentDefendant = get(targetName);
+            document.getElementById('vote-select-phase').style.display = 'none';
+            document.getElementById('vote-defense-phase').style.display = 'block';
+            document.getElementById('defendant-name').innerText = `จำเลย: ${currentDefendant.name}`;
+
+            let timeLeftDefense = 30;
+            const timerEl = document.getElementById('defense-timer');
+            timerEl.innerText = timeLeftDefense;
+
+            clearInterval(defenseTimer);
+            defenseTimer = setInterval(() => {
+                timeLeftDefense--;
+                timerEl.innerText = timeLeftDefense;
+                if (timeLeftDefense <= 0) clearInterval(defenseTimer);
+            }, 1000);
+        }
+
+        function finalizeVerdict(isGuilty) {
+            clearInterval(defenseTimer);
+
+            if (isGuilty) {
+                log(`⚖️ ศาลตัดสิน: ประหาร ${currentDefendant.name} (Guilty)`);
+                if(currentDefendant.role.includes("ยาจก")){ win(`${currentDefendant.name} (ยาจก) ชนะ!`,"bg-warning","ตายสมใจ"); handleDeaths([currentDefendant],"โหวต",false); return; }
+                if(currentDefendant.role.includes("เจ้าชาย")){ alert("เจ้าชายเปิดเผยตัว! รอด"); log(`👑 ${currentDefendant.name} เป็นเจ้าชาย (รอด)`); endDayGoNight(); return; }
+                if(currentDefendant.role.includes("ไอ้ทึ่ม")){ alert("ไอ้ทึ่มเปิดเผยตัว! รอด"); log(`🤪 ${currentDefendant.name} เป็นไอ้ทึ่ม (รอด)`); endDayGoNight(); return; }
+                pendingVampireVictims = pendingVampireVictims.filter(id => id !== currentDefendant.id);
+                handleDeaths([currentDefendant], "โหวต", false);
                 updateDropdowns(); renderStatusTable(); checkWin();
+            } else {
+                log(`⚖️ ศาลตัดสิน: ยกฟ้อง ${currentDefendant.name} (Innocent)`);
             }
             endDayGoNight();
         }
@@ -399,7 +561,7 @@
             deadSet.forEach(p=>{
                 if(!p.isAlive) return;
                 p.isAlive=false; log(`💀 ${p.name} ตาย (${cause})`);
-                if(p.role.includes("ลูกหมาป่า") || p.role.includes("Wolf Cub")) { alert(`🐺🩸 ลูกหมาป่าตาย!! คืนหน้าฆ่า 2`); log("⚠️ Wolf Rage Mode ON"); wolfRageMode=true; }
+                if(p.role.includes("ลูกมนุษย์หมาป่า") || p.role.includes("Wolf Cub")) { alert(`🐺🩸 ลูกหมาป่าตาย!! คืนหน้าฆ่า 2`); log("⚠️ Wolf Rage Mode ON"); wolfRageMode=true; }
                 if(p.role.includes("ระเบิด")) { document.getElementById('mad-bomber-section').style.display='block'; alert("มือระเบิดตาย!"); }
                 if(p.loverId){ let l=players.find(x=>x.id===p.loverId); if(l&&l.isAlive){ l.isAlive=false; log(`💔 ${l.name} ตรอมใจ`); if(triggerHunter) checkHunter(l); }}
                 if(triggerHunter) checkHunter(p);
